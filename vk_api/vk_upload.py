@@ -5,7 +5,7 @@
 @contact: https://vk.com/python273
 @license Apache License, Version 2.0, see LICENSE file
 
-Copyright (C) 2015
+Copyright (C) 2016
 """
 
 
@@ -109,6 +109,27 @@ class VkUpload(object):
         values.update(response.json())
 
         response = self.vk.method('photos.saveWallPhoto', values)
+
+        return response
+
+    def audio(self, file_path, **kwargs):
+        """ Загрузка аудио
+
+        :param file_path: путь к аудиофайлу
+        :param artist: исполнитель
+        :param title: название
+        """
+
+        url = self.vk.method('audio.getUploadServer')['upload_url']
+
+        filetype = file_path.split('.')[-1]
+        audio_file = [(('file', ( 'file.' + filetype, open(file_path, 'rb'))))]
+
+        response = self.vk.http.post(url, files=audio_file).json()
+
+        response.update(kwargs)
+
+        response = self.vk.method('audio.save', response)
 
         return response
 
